@@ -5,6 +5,7 @@ use 5.010;
 use POSIX;
 use Math::Round;
 use Data::Dumper;
+use File::Basename;
 
 #https://www.speechpad.com/captions/srt
 #Read in the SRT file:
@@ -31,8 +32,8 @@ if($#ARGV + 1 != 5) {
 
 #check that an srt file has been passed in.
 my $file = $ARGV[0]?$ARGV[0]:die "no file passed, please provide a file"; #expected file name format: filename.srt
-my @filename = split('[.]',$file);
-if(!($filename[1] eq "srt" || $filename[1] eq "SRT")) {
+my ($filename,$path,$suffix) = fileparse($file,  ".srt");
+if(!($suffix eq ".srt" || $suffix eq ".SRT")) {
 	die "file format is not srt";
 }
 
@@ -180,7 +181,7 @@ my ($m, $b) = calc_m_b(
 linear_correct_subs($m, $b);
 
 #Open/Close a new file and save the corrected srt time stamps.
-my $outputFilename = $filename[0] . "-resync.srt";
+my $outputFilename = $filename . "-resync.srt";
 open my $fh, '>', $outputFilename or die "Cannot open $outputFilename: $!";
 
 # Loop over the array and print to output file
